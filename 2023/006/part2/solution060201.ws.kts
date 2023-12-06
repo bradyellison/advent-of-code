@@ -10,11 +10,7 @@ val digitRuns = "[0-9]+".toRegex()
 
 for (inputPrefix in sequenceOf("sample", "real")) {
     val values = File("""${inputPrefix}.input001.txt""")
-            .bufferedReader()
-            .lines()
-            .asSequence()
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
+            .bufferedReader().lines().asSequence().map { it.trim() }.filter { it.isNotEmpty() }
             .take(2)
             .map { line ->
                 val (kind, valuesRaw) = line.splitToSequence(':').take(2).zipWithNext().single()
@@ -29,8 +25,7 @@ for (inputPrefix in sequenceOf("sample", "real")) {
                             }
                         }
             }
-            .zipWithNext()
-            .single()
+            .zipWithNext().single()
             .let { (al, bl) -> al.zip(bl) }
             .map { (a, b) ->
                 when {
@@ -41,8 +36,20 @@ for (inputPrefix in sequenceOf("sample", "real")) {
                     }
                 }
             }
-            .map {
-                /*
+            .map { it.winningCount() }
+
+    val result = values.fold(1L) { prod, current -> prod * current }
+
+    println("Input:       ${inputPrefix}")
+    println("Result:      ${result}")
+}
+
+
+@JvmInline value class Time(val value: Long)
+@JvmInline value class Distance(val value: Long)
+data class TimeAndDistance(val time: Time, val distance: Distance) {
+    fun winningCount(): Long {
+        /*
                 t = race time
                 h = hold time
                 l = travel time
@@ -56,32 +63,16 @@ for (inputPrefix in sequenceOf("sample", "real")) {
                 solve for h:
                 h = 1/2 (t + sqrt(t^2 - 4 d))
                 h = 1/2 (t - sqrt(t^2 - 4 d))
-
-                1/2(7 +- sqrt(7*7 - 4*9))
-
-                1/2(7 +- sqrt(7*7 - 4*9))
                  */
-                val time = it.time.value.toDouble()
-                val distance = it.distance.value.toDouble()
-                val inner = sqrt(((time * time) - (4 * distance)))
-//                val max = round(floor((time + inner) / 2.0)).toInt()
-//                val min = round(ceil((time - inner) / 2.0)).toInt()
-                val max = (((time + inner) / 2.0))
-                val min = (((time - inner) / 2.0))
-                val maxFloor = floor(max)
-                val minCeil = ceil(min)
-                val start = if (max != maxFloor) maxFloor else maxFloor - 1
-                val end = if (min != minCeil) minCeil else minCeil + 1
-                (start - end + 1).toLong()
-            }
-
-    val result = values.fold(1L) { prod, current -> prod * current }
-
-    println("Input:       ${inputPrefix}")
-    println("Result:      ${result}")
+        val time = time.value.toDouble()
+        val distance = distance.value.toDouble()
+        val inner = sqrt(((time * time) - (4 * distance)))
+        val max = (((time + inner) / 2.0))
+        val min = (((time - inner) / 2.0))
+        val maxFloor = floor(max)
+        val minCeil = ceil(min)
+        val start = if (max != maxFloor) maxFloor else maxFloor - 1
+        val end = if (min != minCeil) minCeil else minCeil + 1
+        return (start - end + 1).toLong()
+    }
 }
-
-
-@JvmInline value class Time(val value: Long)
-@JvmInline value class Distance(val value: Long)
-data class TimeAndDistance(val time: Time, val distance: Distance)

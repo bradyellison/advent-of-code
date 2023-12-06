@@ -10,17 +10,12 @@ val digitRuns = "[0-9]+".toRegex()
 
 for (inputPrefix in sequenceOf("sample", "real")) {
     val values = File("""${inputPrefix}.input001.txt""")
-            .bufferedReader()
-            .lines()
-            .asSequence()
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
+            .bufferedReader().lines().asSequence().map { it.trim() }.filter { it.isNotEmpty() }
             .take(2)
             .map { line ->
                 val (kind, valuesRaw) = line.splitToSequence(':').take(2).zipWithNext().single()
                 digitRuns.findAll(valuesRaw)
-                        .map { it.value }
-                        .map { Integer.parseInt(it) }
+                        .map { it.value.toInt() }
                         .let { values ->
                             when (kind) {
                                 "Time" -> values.map { Time(it) }
@@ -42,30 +37,9 @@ for (inputPrefix in sequenceOf("sample", "real")) {
                 }
             }
             .map {
-                /*
-                t = race time
-                h = hold time
-                l = travel time
-                t-h = l
-
-                d = distance travelled
-                h*(1 mm/ms) * l = d
-                h * (t - h) = d
-                h*t - h*h = d
-
-                solve for h:
-                h = 1/2 (t + sqrt(t^2 - 4 d))
-                h = 1/2 (t - sqrt(t^2 - 4 d))
-
-                1/2(7 +- sqrt(7*7 - 4*9))
-
-                1/2(7 +- sqrt(7*7 - 4*9))
-                 */
                 val time = it.time.value.toDouble()
                 val distance = it.distance.value.toDouble()
                 val inner = sqrt(((time * time) - (4 * distance)))
-//                val max = round(floor((time + inner) / 2.0)).toInt()
-//                val min = round(ceil((time - inner) / 2.0)).toInt()
                 val max = (((time + inner) / 2.0))
                 val min = (((time - inner) / 2.0))
                 val maxFloor = floor(max)

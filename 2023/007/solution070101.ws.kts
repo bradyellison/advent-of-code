@@ -1,7 +1,9 @@
 import java.io.File
+import java.util.concurrent.TimeUnit
 import kotlin.streams.asSequence
 
 for (inputPrefix in sequenceOf("sample", "real")) {
+    val start = System.nanoTime()
     val values = File("""${inputPrefix}.input001.txt""")
             .bufferedReader().lines().asSequence().map { it.trim() }.filter { it.isNotEmpty() }
             .map {
@@ -16,8 +18,10 @@ for (inputPrefix in sequenceOf("sample", "real")) {
             .map { (rank, bid) -> rank * bid }
 
     val result = values.sum()
+    val runMillis = (System.nanoTime() - start) / (TimeUnit.MILLISECONDS.toNanos(1)).toDouble()
 
     println("Input:       ${inputPrefix}")
+    println("Timing:      ${runMillis}")
     println("Result:      ${result}")
 }
 

@@ -6,7 +6,6 @@ import kotlin.streams.asSequence
 val nonWordRun = "\\W+".toRegex()
 val rightMask = 0xFFFFFFFFL
 
-
 for (inputPrefix in sequenceOf("sample", "sample2", "real")) {
     val start = System.nanoTime()
     val (rawInstructionSequence, rawPositionAndFork) = File("../${inputPrefix}.input001.txt")
@@ -54,7 +53,7 @@ for (inputPrefix in sequenceOf("sample", "sample2", "real")) {
                         .takeWhile { it !in endSymbols }
                         .count().toBigInteger()
             }
-            .fold(1.toBigInteger()) { a, b -> a.multiply(b).divide(a.gcd(b)) }
+            .reduce { a, b -> a * b / a.gcd(b) }
 
     val result = moveCounts
     val runMillis = (System.nanoTime() - start) / (TimeUnit.MILLISECONDS.toNanos(1)).toDouble()
@@ -63,4 +62,3 @@ for (inputPrefix in sequenceOf("sample", "sample2", "real")) {
     println("Timing:      ${runMillis}")
     println("Result:      ${result}")
 }
-

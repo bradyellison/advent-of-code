@@ -14,8 +14,9 @@ for (inputPrefix in sequenceOf("sample", "real")) {
                     current.zipWithNext { a, b -> b - a }
                 }
                         .takeWhile { it.last() != 0 }
-                        .map { it.last() }
-                        .sum()
+                        .map { it.first() }
+                        .toList().asReversed()
+                        .reduce { a, b -> b - a }
             }
             .sum()
 
